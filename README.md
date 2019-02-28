@@ -5,7 +5,7 @@ This code is based on angular tutorial Tour of heroes available at : https://ang
 
 The test are especially based on heroes.service and message.service.
 
-To install use : ng build
+To install use : npm install
 
 To run demo use : ng serve
 
