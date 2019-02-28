@@ -7,6 +7,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { HEROES_2018 } from './mock-heroes';
 import { MessageServiceSniffer } from './message-service-sniffer';
 import { MessageService } from './message.service';
+import { Hero } from './hero';
 // import { MessageService } from './message.service';
 
 describe('HeroService', () => {
@@ -49,7 +50,7 @@ describe('HeroService', () => {
     //    2.5- In the response : The test is done, we return the result to Jasmine otherwise, we'll get a time out
     //    2.1- The http get is sent at this very moment, so let's check it.
     //    2.2- Check that request is not null and is unique
-    //    2.3- Simulate posted data from Backend (we return HEROES_2018)
+    //    2.3- Simulate posted data from Backend (we return a cloned HEROES_2018)
    */
   it('Should send the correct Rest URL and return the corresponding response in its property', (done) => {
     //1- 
@@ -57,7 +58,17 @@ describe('HeroService', () => {
     //2-
     service.getHeroes().subscribe(result => {
       //2.4-
-      expect(result).toEqual(HEROES_2018);
+      expect(result).toBeTruthy();
+      let resultLength = result.length;
+      expect(resultLength == HEROES_2018.length).toBeTruthy();
+      for(let i = 0; i < resultLength; i++)
+      {
+        expect(result[i].id === HEROES_2018[i].id).toBeTruthy();
+        expect(result[i].name === HEROES_2018[i].name).toBeTruthy();
+        expect(result[i].updateDate === HEROES_2018[i].updateDate).toBeTruthy();
+        expect(result[i].origin === HEROES_2018[i].origin).toBeTruthy();
+        
+      }
       //2.5
       done();
     });
@@ -66,7 +77,15 @@ describe('HeroService', () => {
     //2.2-
     expect(request).toBeTruthy();
     //2.3-
-    request.flush(HEROES_2018);
+    const clonedHeroes2018  = new Array<Hero>();
+    //Could use lowDash clone method ..
+    HEROES_2018.map(val => clonedHeroes2018.push({
+      id: val.id,
+      name: val.name,
+      updateDate: val.updateDate,
+      origin: val.origin,
+    }));
+    request.flush(clonedHeroes2018);
   });
 
 
@@ -83,11 +102,11 @@ describe('HeroService', () => {
    * 
    */
   it('should log one message on GetHeroes', (done) => {
-    //1.1 bis
-    //let sniffMessageService: MessageServiceSniffer = new MessageServiceSniffer();
+    //1.1 bis with this one, test suceed
+    let sniffMessageService: MessageServiceSniffer = new MessageServiceSniffer();
     //1.1-
     //With this one, test fail as construcotr of this service log a message :
-    let sniffMessageService:MessageService = new MessageService(); 
+    //let sniffMessageService:MessageService = new MessageService(); 
 
     //2-
     service.setMessageService(sniffMessageService);
@@ -97,10 +116,10 @@ describe('HeroService', () => {
       //3.never
       //When returning reference of your messages, everyone can update it without using the interface contract Add or Clear  .... Is that wanted ?
       //sniffMessageService.messages.pop();
-      expect(sniffMessageService.messages.length == 1).toBeTruthy();
+      //expect(sniffMessageService.messages.length == 1).toBeTruthy();
       //Don't forget the "toBeTruthy" or test always succeed :-)
       //3.1bis
-      //expect(sniffMessageService._counter === 1).toBeTruthy();
+      expect(sniffMessageService._counter === 1).toBeTruthy();
       //The test is done, we return the result to Jasmine otherwise, we'll get a time out
       done();
     });
