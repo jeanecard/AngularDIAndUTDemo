@@ -18,7 +18,9 @@ export class MessageService implements MessageServiceInterface {
    * Public Get accessor for messages property.
    * Watch out, return your reference or a copy ?
    * reference allow to add message without call Add
-   * copy force to call Add but "observers" (not implemented here) have to be notified that content have changed ?
+   * Old Fashion way : copy force to call Add but "observers" (not implemented here) have to be notified that content have changed ?
+   * Think about it : Why do not use a IEnumerable (IIterable) that add abstraction on the way your content manage data ? This way you 
+   * declare yout data as read only :-)
    */
   public get messages(): string[] {
     return this._messages;
